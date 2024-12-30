@@ -1,71 +1,146 @@
-import React from "react";
+import axios from "axios";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import logo from '../../assets/icon/login-logo.svg';
+const Login = () => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState({ email: "", password: "" });
 
-function LoginPage() {
+    const navigate = useNavigate();
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+
+        // Reset error messages
+        setError({ email: "", password: "" });
+
+        // Basic form validation
+        if (!email || !password) {
+            setError({
+                email: !email ? "Email is required" : "",
+                password: !password ? "Password is required" : "",
+            });
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+
+            // Send login request to backend
+            const response = await axios.post("http://localhost:3000/api/users/login", {
+                email,
+                password,
+            });
+
+            // Store the token (example: in localStorage)
+            localStorage.setItem("authToken", response.data.token);
+
+            alert("Login successful!");
+            // Redirect to dashboard or another private route
+            navigate("/dashboard");
+        } catch (err) {
+            console.error("Error during login:", err.response?.data || err.message);
+            alert(err.response?.data?.message || "An error occurred during login.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <div className="min-h-screen flex items-center justify-center bg-blue-50">
-            <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm w-full">
-                <div className="flex justify-center mb-6">
-                    <img
-                        src="src/assets/icon/login-logo.svg" // Replace with the actual logo URL
-                        alt="Logo"
-                        className="w-16 h-16"
-                    />
-                </div>
-                <h1 className="text-2xl font-bold text-center mb-2">Login</h1>
-                <p className="text-gray-600 text-center mb-6">Welcome Back! You have been missed.</p>
-                <form>
-                    <div className="mb-4">
-                        <label htmlFor="email" className="block text-gray-700 mb-2">
-                            Email Address
-                        </label>
-                        <input
-                            type="email"
-                            id="email"
-                            placeholder="Enter your email"
-                            className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none"
+        <div className="min-h-screen flex items-center justify-center bg-blue-50 font-open-sans p-4">
+            <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg p-0.5 shadow-xl w-full max-w-md">
+                <div className="bg-white rounded-lg w-full px-8 py-10">
+                    <div className="flex justify-center mb-6">
+                        <img
+                            src={logo}
+                            alt="Logo"
+                            className="w-24 h-24"
                         />
                     </div>
-                    <div className="mb-4">
-                        <label htmlFor="password" className="block text-gray-700 mb-2">
-                            Password
-                        </label>
-                        <div className="relative">
+                    <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
+                        Login
+                    </h1>
+                    <p className="text-sm text-gray-600 text-center mb-6">
+                        Welcome Back! You have been missed.
+                    </p>
+                    <form onSubmit={handleLogin}>
+                        <div className="mb-4">
+                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address
+                            </label>
                             <input
-                                type="password"
+                                type="email"
+                                id="email"
+                                className={`w-full px-4 py-2 border ${error.email ? "border-red-500" : "border-gray-300"
+                                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                            />
+                            {error.email && <p className="text-red-500 text-sm">{error.email}</p>}
+                        </div>
+
+                        <div className="mb-6 relative">
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                                Password
+                            </label>
+                            <input
+                                type={showPassword ? "text" : "password"}
                                 id="password"
-                                placeholder="Enter your password"
-                                className="w-full px-4 py-2 border rounded-lg focus:ring focus:ring-blue-300 focus:outline-none"
+                                className={`w-full px-4 py-2 border ${error.password ? "border-red-500" : "border-gray-300"
+                                    } rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                required
                             />
                             <button
                                 type="button"
-                                className="absolute inset-y-0 right-3 flex items-center text-gray-500 hover:text-gray-700"
+                                className="absolute right-4 top-3 text-gray-500 hover:text-gray-700"
+                                onClick={() => setShowPassword(!showPassword)}
                             >
-                                {/* Add an eye icon for showing/hiding password */}
-                                👁️
+                                {showPassword ? "👁️‍🗨️" : "👁️"}
                             </button>
+                            {error.password && <p className="text-red-500 text-sm">{error.password}</p>}
                         </div>
-                    </div>
-                    <div className="mb-4 text-right">
-                        <a href="/forgot-password" className="text-blue-500 hover:underline">
+
+                        <button
+                            type="submit"
+                            className={`w-full bg-blue-600 py-2 text-white rounded-lg text-lg font-semibold hover:bg-blue-700 ${isLoading ? "opacity-50 cursor-not-allowed" : ""
+                                }`}
+                            disabled={isLoading}
+                        >
+                            {isLoading ? "Signing In..." : "Login"}
+                        </button>
+                    </form>
+
+                    <div className="mt-4 text-center">
+                        <a
+                            href="#"
+                            onClick={() => navigate("/forgot-password")}
+                            className="text-sm text-blue-600 hover:text-blue-800"
+                        >
                             Forgot Password?
                         </a>
                     </div>
-                    <button
-                        type="submit"
-                        className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
-                    >
-                        Login
-                    </button>
-                </form>
-                <p className="text-center text-gray-600 mt-6">
-                    Don’t Have An Account?{" "}
-                    <a href="/signup" className="text-blue-500 hover:underline">
-                        Sign Up
-                    </a>
-                </p>
+
+                    <div className="mt-4 text-center">
+                        <p className="text-sm text-gray-600">
+                            Don’t have an account?{" "}
+                            <span
+                                onClick={() => navigate("/register")}
+                                className="text-blue-600 hover:underline cursor-pointer"
+                            >
+                                Sign Up
+                            </span>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     );
-}
+};
 
-export default LoginPage;
+export default Login;

@@ -1,85 +1,7 @@
-
-import '@fortawesome/fontawesome-free/css/all.min.css';
-
-// import React from 'react';
-// import navlogo from '../assets/icon/nav-logo.svg';
-
-// const Navbar = () => {
-//     return (
-//         <div className="flex navbar bg-white shadow-md p-3">
-//             {/* Section 01: Logo */}
-//             <div className="flex-none flex gap-4 items-center justify-center">
-//                 <img src={navlogo} alt="Nav Logo" className="h-10" />
-//             </div>
-//             {/* Section 02: Search Bar and Icons */}
-//             <div className="flex-auto w-64 flex items-center gap-4">
-//                 {/* Icons */}
-//                 <div className="flex gap-4">
-//                     <div className="btn btn-white btn-square bg-red-600">
-//                         <i className="fas fa-home" title="Home"></i>
-//                     </div>
-//                     <div className="btn btn-primary btn-square bg-white">
-//                         <i className="fas fa-map-marker-alt" title="Map"></i>
-//                     </div>
-//                     <div className="btn btn-primary btn-square bg-white">
-//                         <i className="fas fa-compass" title="Guidance"></i>
-//                     </div>
-//                     <div className="btn btn-primary btn-square bg-white">
-//                         <i className="fas fa-calendar" title="Calendar"></i>
-//                     </div>
-//                 </div>
-//                 {/* Search Bar */}
-//                 <div className="flex-1 w-auto">
-//                     <input
-//                         type="text"
-//                         placeholder="Search"
-//                         className="input bg-blue-50 input-bordered w-full"
-//                     />
-//                 </div>
-//             </div>
-
-//             {/* Section 03: Notification and Profile */}
-//             <div className="flex-auto w-32 flex items-center justify-end gap-4">
-//                 {/* Notification Icon */}
-//                 <div className="btn btn-primary btn-square bg-white">
-//                     <i className="fas fa-bell" title="Notifications"></i>
-//                 </div>
-
-//                 {/* Profile Dropdown */}
-//                 <div className="dropdown dropdown-end">
-//                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
-//                         <div className="w-10 rounded-full">
-//                             <img
-//                                 alt="User Avatar"
-//                                 src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-//                             />
-//                         </div>
-//                     </div>
-//                     <ul
-//                         tabIndex={0}
-//                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
-//                         <li>
-//                             <a className="justify-between">
-//                                 Profile
-//                                 <span className="badge">New</span>
-//                             </a>
-//                         </li>
-//                         <li>
-//                             <a>Settings</a>
-//                         </li>
-//                         <li>
-//                             <a>Logout</a>
-//                         </li>
-//                     </ul>
-//                 </div>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Navbar;
-
-
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+  rel="stylesheet"
+/>
 import React, { useState } from "react";
 import navlogo from "../assets/icon/nav-logo.svg";
 
@@ -97,26 +19,34 @@ const Navbar = () => {
 
   return (
     <header className="bg-white shadow fixed w-full z-50">
-      <nav className="flex justify-between items-center p-3">
+      <nav className="flex justify-between items-center px-4 py-3 md:px-8">
         {/* Logo */}
         <div>
           <a href="#">
             <img
               src={navlogo}
               alt="Logo"
-              style={{ width: "17rem" }}
-              className="cursor-pointer"
+              className="w-32 md:w-48 cursor-pointer"
             />
           </a>
         </div>
 
+        {/* Hamburger Icon for Mobile */}
+        <div className="md:hidden border-2 border-red-500">
+          <button
+            onClick={toggleMenu}
+            className="text-gray-500 hover:text-gray-900 focus:outline-none"
+          >
+            <i className="fas fa-bars text-xl text-black"></i>
+          </button>
+        </div>
+
         {/* Navigation Links */}
         <div
-          className={`nav-links duration-500 md:static absolute bg-white md:min-h-fit min-h-[60vh] left-0 ${
-            isMenuOpen ? "top-16" : "top-[-100%]"
-          } md:w-auto w-full flex flex-col md:flex-row items-center px-5`}
+          className={`${isMenuOpen ? "block" : "hidden"
+            } md:flex md:items-center absolute md:relative top-16 md:top-auto left-0 md:left-auto w-full md:w-auto bg-white md:bg-transparent md:gap-8 p-4 md:p-0 z-40`}
         >
-          <ul className="flex md:flex-row flex-col md:items-center md:gap-[4vw] gap-8">
+          <ul className="flex flex-col md:flex-row md:items-center md:gap-6">
             <li>
               <a href="#" className="text-gray-700">
                 <div className="text-xl bg-red-800 text-white w-10 h-10 flex justify-center items-center rounded-lg mx-auto hover:bg-blue-800">
@@ -180,7 +110,7 @@ const Navbar = () => {
         </div>
 
         {/* Notifications and Profile */}
-        <div className="flex items-center gap-6">
+        <div className="hidden md:flex items-center gap-6">
           <button
             id="notificationButton"
             type="button"
@@ -199,7 +129,7 @@ const Navbar = () => {
 
           {/* Profile Dropdown */}
           <div
-            className="flex items-center gap-3 cursor-pointer mx-2 rounded-full hover:ring-2 hover:ring-gray-600"
+            className="relative flex items-center gap-3 cursor-pointer rounded-full hover:ring-2 hover:ring-gray-600"
             onClick={toggleProfileDropdown}
           >
             <img
@@ -238,8 +168,6 @@ const Navbar = () => {
               </div>
             </div>
           )}
-
-        
         </div>
       </nav>
     </header>

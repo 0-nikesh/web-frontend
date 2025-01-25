@@ -1,7 +1,8 @@
 import axios from "axios";
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from '../../assets/icon/login-logo.svg';
+import logo from "../../assets/icon/login-logo.svg";
+
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -35,15 +36,28 @@ const Login = () => {
                 password,
             });
 
-            // Store the token (example: in localStorage)
-            localStorage.setItem("authToken", response.data.token);
+            const { token, user } = response.data;
+
+            // Validate response
+            if (!user || typeof user.isAdmin === "undefined") {
+                throw new Error("Invalid response from server: Missing user or isAdmin field.");
+            }
+
+            // Store the token and user data
+            localStorage.setItem("authToken", token);
+            localStorage.setItem("user", JSON.stringify(user)); // Store user details (e.g., isAdmin)
 
             alert("Login successful!");
-            // Redirect to dashboard or another private route
-            navigate("/dashboard");
+
+            // Redirect based on user role
+            if (user.isAdmin) {
+                navigate("/admin"); // Redirect to admin panel
+            } else {
+                navigate("/dashboard"); // Redirect to user dashboard
+            }
         } catch (err) {
-            console.error("Error during login:", err.response?.data || err.message);
-            alert(err.response?.data?.message || "An error occurred during login.");
+            console.error("Error during login:", err.message);
+            alert(err.response?.data?.message || err.message || "An error occurred during login.");
         } finally {
             setIsLoading(false);
         }
@@ -54,11 +68,7 @@ const Login = () => {
             <div className="bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-lg p-0.5 shadow-xl w-full max-w-md">
                 <div className="bg-white rounded-lg w-full px-8 py-10">
                     <div className="flex justify-center mb-6">
-                        <img
-                            src={logo}
-                            alt="Logo"
-                            className="w-24 h-24"
-                        />
+                        <img src={logo} alt="Logo" className="w-24 h-24" />
                     </div>
                     <h1 className="text-3xl font-bold text-center text-gray-800 mb-2">
                         Login
@@ -68,7 +78,10 @@ const Login = () => {
                     </p>
                     <form onSubmit={handleLogin}>
                         <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                            <label
+                                htmlFor="email"
+                                className="block text-sm font-medium text-gray-700 mb-2"
+                            >
                                 Email Address
                             </label>
                             <input
@@ -80,11 +93,16 @@ const Login = () => {
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
                             />
-                            {error.email && <p className="text-red-500 text-sm">{error.email}</p>}
+                            {error.email && (
+                                <p className="text-red-500 text-sm">{error.email}</p>
+                            )}
                         </div>
 
                         <div className="mb-6 relative">
-                            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                            <label
+                                htmlFor="password"
+                                className="block text-sm font-medium text-gray-700 mb-2"
+                            >
                                 Password
                             </label>
                             <input
@@ -103,7 +121,9 @@ const Login = () => {
                             >
                                 {showPassword ? "👁️‍🗨️" : "👁️"}
                             </button>
-                            {error.password && <p className="text-red-500 text-sm">{error.password}</p>}
+                            {error.password && (
+                                <p className="text-red-500 text-sm">{error.password}</p>
+                            )}
                         </div>
 
                         <button

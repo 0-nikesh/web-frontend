@@ -1,176 +1,142 @@
-<link
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-  rel="stylesheet"
-/>
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import navlogo from "../assets/icon/nav-logo.svg";
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
+  const [activeIcon, setActiveIcon] = useState("");
+  const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (storedUser) {
+      setUser(storedUser);
+    }
+  }, []);
 
-  const toggleProfileDropdown = () => {
-    setIsProfileDropdownOpen(!isProfileDropdownOpen);
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
+  }, [darkMode]);
+
+  const handleIconClick = (icon) => {
+    setActiveIcon(icon);
   };
 
   return (
-    <header className="bg-white shadow fixed w-full z-50">
-      <nav className="flex justify-between items-center px-4 py-3 md:px-8">
-        {/* Logo */}
-        <div>
-          <a href="#">
-            <img
-              src={navlogo}
-              alt="Logo"
-              className="w-32 md:w-48 cursor-pointer"
-            />
-          </a>
-        </div>
+    <div className={`min-h-screen bg-[#EFF6FF] dark:bg-[#1A1C22]`}>
+      {/* Desktop Header */}
+      <header className="bg-white dark:bg-[#2A2C33] shadow fixed w-full z-50 hidden md:block">
+        <nav className="flex justify-between items-center px-4 py-3 md:px-8">
+          {/* Logo */}
+          <div className="flex items-center">
+            <a href="#">
+              <img src={navlogo} alt="Logo" className="w-32 md:w-48 cursor-pointer" />
+            </a>
+          </div>
 
-        {/* Hamburger Icon for Mobile */}
-        <div className="md:hidden border-2 border-red-500">
-          <button
-            onClick={toggleMenu}
-            className="text-gray-500 hover:text-gray-900 focus:outline-none"
-          >
-            <i className="fas fa-bars text-xl text-black"></i>
-          </button>
-        </div>
+          {/* Navigation Links and Search Bar */}
+          <div className="flex items-center gap-6 flex-grow justify-center">
+            <ul className="flex gap-6">
+              {["Home", "Events", "Profiles", "Map", "Documents"].map((item) => (
+                <li key={item}>
+                  <a
+                    href={`/${item.toLowerCase()}`}
+                    onClick={() => handleIconClick(item)}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg ${activeIcon === item
+                      ? "bg-red-500 text-white"
+                      : "text-[#697287] dark:text-[#B0BAC9] hover:bg-gray-200 dark:hover:bg-gray-700"
+                      }`}
+                  >
+                    <i className={`fa-solid fa-${item.toLowerCase() === "home" ? "house" : "file-alt"}`}></i> {item}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <div className="flex-grow mx-6">
+              <input
+                type="text"
+                className="w-full p-2 rounded-full bg-gray-100 dark:bg-gray-800 dark:text-white text-sm placeholder-gray-500"
+                placeholder="Search here..."
+              />
+            </div>
+          </div>
 
-        {/* Navigation Links */}
-        <div
-          className={`${isMenuOpen ? "block" : "hidden"
-            } md:flex md:items-center absolute md:relative top-16 md:top-auto left-0 md:left-auto w-full md:w-auto bg-white md:bg-transparent md:gap-8 p-4 md:p-0 z-40`}
-        >
-          <ul className="flex flex-col md:flex-row md:items-center md:gap-6">
-            <li>
-              <a href="#" className="text-gray-700">
-                <div className="text-xl bg-red-800 text-white w-10 h-10 flex justify-center items-center rounded-lg mx-auto hover:bg-blue-800">
-                  <i className="fa-solid fa-house"></i>
-                </div>
-              </a>
-            </li>
-            <li>
-              <a href="/events" className="text-gray-700">
-                <div className="text-xl bg-white text-gray-500 w-10 h-10 flex justify-center items-center rounded-lg mx-auto hover:bg-blue-800 hover:text-white">
-                  <i className="fa-regular fa-calendar-days"></i>
-                </div>
-              </a>
-            </li>
-            <li>
-              <a href="/government_profiles" className="text-gray-700">
-                <div className="text-xl bg-white text-gray-500 w-10 h-10 flex justify-center items-center rounded-lg mx-auto hover:bg-blue-800 hover:text-white">
-                  <i className="fa fa-building"></i>
-                </div>
-              </a>
-            </li>
-            <li>
-              <a href="/map/" className="text-gray-700">
-                <div className="text-xl bg-white text-gray-500 w-10 h-10 flex justify-center items-center rounded-lg mx-auto hover:bg-blue-800 hover:text-white">
-                  <i className="fa-solid fa-map-location-dot"></i>
-                </div>
-              </a>
-            </li>
-            <li>
-              <form className="flex items-center">
-                <label htmlFor="simple-search" className="sr-only">
-                  Search
-                </label>
-                <div className="relative w-full">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 bg-blue-50 pointer-events-none">
-                    <svg
-                      aria-hidden="true"
-                      className="w-5 h-5 text-[#bcbbbb]"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <input
-                    type="text"
-                    id="searchInput"
-                    className="block w-full p-2.5 pl-10 pr-10 text-sm text-gray-700 bg-blue-50 rounded-lg border border-gray-300 focus:ring-primary-100 focus:border-primary-100"
-                    placeholder="Type here to search..."
-                    required
-                  />
-                </div>
-              </form>
-            </li>
-          </ul>
-        </div>
+          {/* Notification and User Profile */}
+          <div className="flex items-center gap-4">
+            <button className="text-[#697287] dark:text-[#B0BAC9]">
+              <i className="fas fa-bell text-lg"></i>
+            </button>
+            <a href="/profile">
+              <img
+                className="w-10 h-10 rounded-full"
+                src={user?.image || "https://via.placeholder.com/150"}
+                alt="Profile"
+              />
+            </a>
+          </div>
+        </nav>
+      </header>
 
-        {/* Notifications and Profile */}
-        <div className="hidden md:flex items-center gap-6">
-          <button
-            id="notificationButton"
-            type="button"
-            className="p-2 text-gray-500 rounded-lg hover:text-gray-900 hover:bg-blue-800 hover:text-white"
-          >
-            <span className="sr-only">View notifications</span>
-            <svg
-              className="w-5 h-5"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 14 20"
-            >
-              <path d="M12.133 10.632v-1.8A5.406 5.406 0 0 0 7.979 3.57.946.946 0 0 0 8 3.464V1.1a1 1 0 0 0-2 0v2.364a.946.946 0 0 0 .021.106 5.406 5.406 0 0 0-4.154 5.262v1.8C1.867 13.018 0 13.614 0 14.807 0 15.4 0 16 .538 16h12.924C14 16 14 15.4 14 14.807c0-1.193-1.867-1.789-1.867-4.175ZM3.823 17a3.453 3.453 0 0 0 6.354 0H3.823Z" />
-            </svg>
-          </button>
-
-          {/* Profile Dropdown */}
-          <div
-            className="relative flex items-center gap-3 cursor-pointer rounded-full hover:ring-2 hover:ring-gray-600"
-            onClick={toggleProfileDropdown}
-          >
-            <img
-              className="w-10 h-10 rounded-full"
-              src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              alt="Profile"
+      {/* Mobile Header */}
+      <header className="bg-white dark:bg-[#2A2C33] shadow fixed w-full z-50 md:hidden">
+        <nav className="flex items-center justify-between px-4 py-2">
+          {/* Logo */}
+          <div>
+            <a href="#">
+              <img src={navlogo} alt="Logo" className="w-10 h-10" />
+            </a>
+          </div>
+          {/* Search Bar */}
+          <div className="flex-grow mx-2">
+            <input
+              type="text"
+              className="w-full p-2 rounded-full bg-gray-100 dark:bg-gray-800 dark:text-white text-sm placeholder-gray-500"
+              placeholder="Search here..."
             />
           </div>
-          {isProfileDropdownOpen && (
-            <div className="absolute right-2 top-14 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-              <div className="py-1">
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Profile Settings
-                </a>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Feedback
-                </a>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Change Password
-                </a>
-                <a
-                  href="#"
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                >
-                  Logout
-                </a>
-              </div>
-            </div>
-          )}
-        </div>
-      </nav>
-    </header>
+          {/* Notification and Profile */}
+          <div className="flex items-center gap-3">
+            <button className="text-[#697287] dark:text-[#B0BAC9]">
+              <i className="fas fa-bell text-lg"></i>
+            </button>
+            <a href="/profile">
+              <img
+                className="w-8 h-8 rounded-full"
+                src={user?.image || "https://via.placeholder.com/150"}
+                alt="Profile"
+              />
+            </a>
+          </div>
+        </nav>
+      </header>
+
+      {/* Footer Navigation for Mobile */}
+      <footer className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-[#2A2C33] shadow-md border-t">
+        <nav className="flex justify-around py-2">
+          {["Home", "Events", "Profiles", "Map", "Documents"].map((item) => (
+            <a
+              key={item}
+              href={`/${item.toLowerCase()}`}
+              onClick={() => handleIconClick(item)}
+              className={`flex flex-col items-center px-2 ${activeIcon === item
+                ? "bg-red-500 text-white"
+                : "text-[#697287] dark:text-[#B0BAC9] hover:bg-gray-200 dark:hover:bg-gray-700"
+                }`}
+            >
+              <i className={`fa-solid fa-${item.toLowerCase() === "home" ? "house" : "file-alt"} text-xl`}></i>
+              <span className="text-sm">{item}</span>
+            </a>
+          ))}
+        </nav>
+      </footer>
+    </div>
   );
 };
 

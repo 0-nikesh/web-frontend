@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../components/navbar";
 
 const Documents = () => {
@@ -30,6 +30,19 @@ const Documents = () => {
     fetchGuidances();
   }, []);
 
+  const getImageSource = (thumbnail) => {
+    if (thumbnail.startsWith("data:image/")) {
+      // Base64 image
+      return thumbnail;
+    } else if (thumbnail.startsWith("http")) {
+      // Full URL (Cloudinary or other)
+      return thumbnail;
+    } else {
+      // Relative path (fallback)
+      return `http://localhost:3000/${thumbnail}`;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-primary dark:bg-surface-dark">
       {/* Navbar */}
@@ -49,9 +62,9 @@ const Documents = () => {
             >
               <div className="flex items-center space-x-4">
                 <img
-                  src={doc.thumbnail.startsWith("data:image/") ? doc.thumbnail : `http://localhost:3000/${doc.thumbnail}`}
+                  src={getImageSource(doc.thumbnail)}
                   alt={doc.title}
-                  className="w-16 h-16 rounded-lg"
+                  className="w-16 h-16 rounded-lg object-cover"
                 />
                 <div>
                   <h3 className="text-lg font-semibold text-text dark:text-text-dark">{doc.title}</h3>

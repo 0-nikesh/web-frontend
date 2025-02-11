@@ -1,10 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import Navbar from "../../components/navbar";
 
 const Documents = () => {
   const [guidances, setGuidances] = useState([]);
-  const [expanded, setExpanded] = useState(null);
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const fetchGuidances = async () => {
     try {
@@ -31,24 +32,18 @@ const Documents = () => {
   }, []);
 
   const getImageSource = (thumbnail) => {
-    if (thumbnail.startsWith("data:image/")) {
-      // Base64 image
-      return thumbnail;
-    } else if (thumbnail.startsWith("http")) {
-      // Full URL (Cloudinary or other)
-      return thumbnail;
-    } else {
-      // Relative path (fallback)
-      return `http://localhost:3000/${thumbnail}`;
-    }
+    if (thumbnail.startsWith("data:image/")) return thumbnail;
+    if (thumbnail.startsWith("http")) return thumbnail;
+    return `http://localhost:3000/${thumbnail}`;
+  };
+
+  const handleCardClick = (id) => {
+    navigate(`/documents/${id}`); // Navigate to the detailed page with the guidance ID
   };
 
   return (
     <div className="min-h-screen bg-primary dark:bg-surface-dark">
-      {/* Navbar */}
       <Navbar />
-
-      {/* Page Content */}
       <div className="p-4 md:p-10 max-w-7xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-bold text-center text-text dark:text-text-dark mb-6">
           Detailed Guidelines
@@ -58,7 +53,7 @@ const Documents = () => {
             <div
               key={index}
               className="bg-white dark:bg-surface-dark shadow-lg rounded-xl p-4 hover:shadow-xl transition-all cursor-pointer"
-              onClick={() => setExpanded(expanded === index ? null : index)}
+              onClick={() => handleCardClick(doc._id)}
             >
               <div className="flex items-center space-x-4">
                 <img
@@ -71,19 +66,6 @@ const Documents = () => {
                   <p className="text-sm text-gray-600 dark:text-gray-400">{doc.category}</p>
                 </div>
               </div>
-              {expanded === index && (
-                <div className="mt-4 text-sm text-gray-700 dark:text-gray-300">
-                  <h4 className="font-semibold">Description:</h4>
-                  <div dangerouslySetInnerHTML={{ __html: doc.description }} />
-
-                  <h4 className="font-semibold mt-4">Documents Required:</h4>
-                  <ul className="ml-4 list-disc">
-                    {doc.documents_required.map((item, i) => (
-                      <li key={i}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
             </div>
           ))}
         </div>

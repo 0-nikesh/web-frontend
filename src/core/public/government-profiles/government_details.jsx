@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-// import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"; // Import React Leaflet components
+import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"; // Import React Leaflet components
 import { useParams } from "react-router-dom";
 import Navbar from "../../../components/navbar";
 
@@ -55,7 +55,7 @@ const GovernmentProfileDetail = () => {
                 <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">{profile.description}</p>
                 <p className="text-md text-gray-500">Address: {profile.address}</p>
 
-                {/* Display the map
+                Display the map
                 <div className="mt-6">
                     <h3 className="text-lg font-semibold mb-2">Location on Map</h3>
                     <MapContainer
@@ -71,7 +71,7 @@ const GovernmentProfileDetail = () => {
                             <Popup>{profile.name}</Popup>
                         </Marker>
                     </MapContainer>
-                </div> */}
+                </div>
             </div>
         </div>
     );

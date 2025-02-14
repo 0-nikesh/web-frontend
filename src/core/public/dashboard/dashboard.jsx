@@ -46,21 +46,27 @@ const Dashboard = () => {
         formData.append('category', category);
         imageFiles.forEach((file) => formData.append('images', file));
 
+        const token = localStorage.getItem('authToken'); // Fetch token here
+
         try {
             await axios.post('http://localhost:3000/api/posts/', formData, {
-                headers: { 'Content-Type': 'multipart/form-data' },
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}` // Attach the token
+                },
             });
             setCaption('');
             setCategory('');
             setImageFiles([]);
             setIsModalOpen(false);
-            fetchPosts();
+            fetchPosts(); // Refresh posts
         } catch (error) {
             console.error('Error creating post:', error);
         } finally {
             setLoading(false);
         }
     };
+
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -81,32 +87,45 @@ const Dashboard = () => {
                 <Modal
                     isOpen={isModalOpen}
                     onRequestClose={closeModal}
-                    className="modal-content"
-                    overlayClassName="modal-overlay"
+                    className="relative w-full max-w-[90%] md:max-w-[600px] bg-white dark:bg-surface-dark rounded-lg p-6 mx-auto mt-16 z-50"
+                    overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-40"
                 >
-                    <h2 className="text-xl font-bold mb-4">Create Post</h2>
+                    <h2 className="text-xl font-bold mb-4 text-center">Create Post</h2>
                     <form onSubmit={handleCreatePost}>
-                        <select
-                            className="p-2 w-full mb-3 rounded bg-primary-light dark:bg-darkAccent text-text-dark"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            required
-                        >
-                            <option value="">Select a Category</option>
-                            <option value="Problems">Problems</option>
-                            <option value="Query">Query</option>
-                            <option value="Suggestions">Suggestions</option>
-                        </select>
-                        <textarea
-                            className="w-full p-2 mb-3 rounded bg-primary-light dark:bg-darkAccent text-text-dark"
-                            placeholder="Write your thoughts..."
-                            value={caption}
-                            onChange={(e) => setCaption(e.target.value)}
-                            required
-                        />
-                        <input type="file" multiple onChange={handleImageUpload} className="mb-3" />
-                        <div className="flex items-center justify-between">
-                            <button type="button" onClick={closeModal} className="bg-gray-400 text-white px-4 py-2 rounded">
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Select a Category</label>
+                            <select
+                                className="p-2 w-full rounded bg-primary-light dark:bg-darkAccent text-text-dark"
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                                required
+                            >
+                                <option value="">Select a Category</option>
+                                <option value="Problems">Problems</option>
+                                <option value="Query">Query</option>
+                                <option value="Suggestions">Suggestions</option>
+                            </select>
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Your Thoughts</label>
+                            <textarea
+                                className="w-full p-2 rounded bg-primary-light dark:bg-darkAccent text-text-dark"
+                                placeholder="Write your thoughts..."
+                                value={caption}
+                                onChange={(e) => setCaption(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="mb-4">
+                            <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Upload Images</label>
+                            <input type="file" multiple onChange={handleImageUpload} className="text-sm text-gray-500 dark:text-gray-400" />
+                        </div>
+                        <div className="flex items-center justify-end gap-4">
+                            <button
+                                type="button"
+                                onClick={closeModal}
+                                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500"
+                            >
                                 Cancel
                             </button>
                             <button
@@ -123,7 +142,10 @@ const Dashboard = () => {
                 {/* Posts Feed */}
                 <div className="space-y-6">
                     {posts.map((post) => (
-                        <div key={post._id} className="bg-surface dark:bg-surface-dark p-4 rounded-lg shadow">
+                        <div
+                            key={post._id}
+                            className="bg-surface dark:bg-surface-dark p-4 rounded-lg shadow w-full max-w-[400px] md:max-w-[600px] lg:max-w-[800px] mx-auto relative z-10"
+                        >
                             <div className="flex items-center justify-between mb-3">
                                 <div className="text-text dark:text-text-dark">
                                     <strong>{post.user_id?.fname || 'User'}</strong> — {new Date(post.created_at).toLocaleString()}
@@ -131,17 +153,16 @@ const Dashboard = () => {
                             </div>
                             <p className="text-text dark:text-text-dark mb-2">{post.caption}</p>
                             {post.images.length > 0 && (
-                                <Swiper spaceBetween={10} slidesPerView={1}>
+                                <Swiper spaceBetween={10} slidesPerView={1} className="relative z-10">
                                     {post.images.map((image, index) => (
                                         <SwiperSlide key={index}>
-                                            <div className="w-full max-w-[400px] md:max-w-[600px] lg:max-w-[800px] aspect-[1/1] overflow-hidden rounded-lg mx-auto">
+                                            <div className="w-full aspect-[1/1] overflow-hidden rounded-lg">
                                                 <img src={image} alt={`Post image ${index + 1}`} className="w-full h-full object-cover" />
                                             </div>
                                         </SwiperSlide>
                                     ))}
                                 </Swiper>
                             )}
-
                             <div className="flex items-center justify-between mt-2">
                                 <button className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
                                     <i className="fas fa-thumbs-up mr-1"></i> {post.like_count} Likes

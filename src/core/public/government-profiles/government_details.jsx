@@ -4,6 +4,7 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet"; // Impor
 import { useParams } from "react-router-dom";
 import Navbar from "../../../components/navbar";
 
+
 const GovernmentProfileDetail = () => {
     const { id } = useParams();
     const [profile, setProfile] = useState(null);
@@ -55,21 +56,35 @@ const GovernmentProfileDetail = () => {
                 <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">{profile.description}</p>
                 <p className="text-md text-gray-500">Address: {profile.address}</p>
 
-                Display the map
+                {/* Map Display */}
                 <div className="mt-6">
                     <h3 className="text-lg font-semibold mb-2">Location on Map</h3>
                     <MapContainer
                         center={[profile.latitude, profile.longitude]}
-                        zoom={15}
-                        style={{ height: "300px", width: "100%" }}
+                        zoom={12}
+                        style={{ height: "400px", width: "100%" }}
                     >
                         <TileLayer
                             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                         />
+
+                        {/* Main Office Marker */}
                         <Marker position={[profile.latitude, profile.longitude]}>
-                            <Popup>{profile.name}</Popup>
+                            <Popup>{profile.name} (Main Office)</Popup>
                         </Marker>
+
+                        {/* Branches Markers */}
+                        {profile.branches &&
+                            profile.branches.map((branch, index) => (
+                                <Marker key={index} position={[branch.latitude, branch.longitude]}>
+                                    <Popup>
+                                        <strong>{branch.name}</strong>
+                                        <br />
+                                        {branch.address}
+                                    </Popup>
+                                </Marker>
+                            ))}
                     </MapContainer>
                 </div>
             </div>

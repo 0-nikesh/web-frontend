@@ -1,67 +1,24 @@
-// import { lazy, Suspense } from "react";
-
-// // import { InfoProvider } from "./context/InfoContext.jsx";
-
-// const Login = lazy(() => import("./core/public/login"));
-// const Home = lazy(() => import("./core/public/home"));
-
-
-// function App() {
-//   const publicRoutes = [
-//     {
-//       path: "/",
-//       element: (
-//         <Suspense>
-//           <Home />
-//         </Suspense>
-//       ),
-//       // errorElement: <>error</>,s
-//     },
-//     {
-//       path: "/login",
-//       element: (
-//         <Suspense>
-//           <Login />
-//         </Suspense>
-//       ),
-//       errorElement: <>error</>,
-//     },
-//   ];
-// }
-
-// export default App;
-
-// import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-// import Dashboard from "./core/public/dashboard";
-// import Login from "./core/public/login";
-// import Register from "./core/public/register";
-// import MyMapComponent from "./core/public/map";
-// function App() {
-//   return (
-//     <Router>
-//       <Routes>
-//         <Route path="/login" element={<Login />} />
-//         <Route path="/register" element={<Register />} />
-//         <Route path="/dashboard" element={<Dashboard />} />
-//         <Route path="/check" element={<MyMapComponent />} />
-//         {/* Add other routes here */}
-//       </Routes>
-//     </Router>
-//   );
-// }
-
-// export default App;
-
+import L from "leaflet";
+import "leaflet-routing-machine";
+import 'leaflet/dist/leaflet.css';
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Admin from "./core/private/admin"; // Admin panel
 import PrivateRoute from "./core/private/privateroute"; // PrivateRoute component
-import Dashboard from "./core/public/dashboard";
-import Forbidden from "./core/public/forbidden"; // 403 Page
+import Dashboard from "./core/public/dashboard/dashboard";
+import Documents from "./core/public/documents/document";
+import GuidanceDetail from "./core/public/documents/guidance_details";
+import Forbidden from "./core/public/forbidden";
 import ForgotPassword from "./core/public/forgot-password";
-import Login from "./core/public/login";
+import GovernmentProfiles from "./core/public/government-profiles/government-profile";
+import GovernmentProfileDetail from "./core/public/government-profiles/government_details";
+import Login from "./core/public/login/index";
 import MyMapComponent from "./core/public/map";
+import Profile from "./core/public/profile";
 import Register from "./core/public/register";
 import ResetPassword from "./core/public/reset-password";
+
+// Make L globally available
+window.L = L;
 
 function App() {
   return (
@@ -72,8 +29,15 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/check" element={<MyMapComponent />} />
         <Route path="/dashboard" element={<Dashboard />} />
+
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/documents" element={<Documents />} />
+        <Route path="/profile/:id" element={<Profile />} />
+
+        <Route path="/documents/:id" element={<GuidanceDetail />} />
+        <Route path="/government" element={<GovernmentProfiles />} />
+        <Route path="/government/:id" element={<GovernmentProfileDetail />} />
 
         {/* Private Routes */}
 

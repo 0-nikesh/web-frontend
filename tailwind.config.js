@@ -1,31 +1,30 @@
 const colors = require("tailwindcss/colors");
 
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"], // Adjust paths based on your project structure
-  darkMode: 'class', // Enables dark mode via the 'class' strategy
+  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
         primary: {
-          DEFAULT: "#003D93", // Your logo color (primary button color)
-          light: "#0050B5", // Slightly lighter for hover effects (optional)
+          DEFAULT: "#EAF1F8",  // Main primary color (light mode)
+          light: "#ECF3F9",    // Lighter variant
+          tint1: "#EFF4FA",    // Additional tint
+          tint2: "#F1F6FA",
         },
-        background: {
-          DEFAULT: "#EAF1F8", // Background color
+        surface: {
+          DEFAULT: "#FFFFFF",  // Light surface color
+          dark: "#2E2E2E",     // Dark mode main background
+          darkAlt: "#424242",  // Alternate dark mode background for cards and headers
+          darkAccent: "#575757", // For secondary elements in dark mode
         },
-        card: {
-          DEFAULT: "#FFFFFF", // Card background color (pure white)
+        text: {
+          DEFAULT: "#374151",  // Light mode text
+          dark: "#E4E4E7",     // Dark mode text
+          muted: "#9CA3AF",    // Secondary text
         },
-        accent: {
-          DEFAULT: "#DB133C", // Secondary logo color (can be used for accents)
-        },
-      },
-      fontFamily: {
-        sans: ["Source Sans Pro", "sans-serif"], // Use Source Sans Pro as default
       },
     },
   },
-  plugins: [
-    require('daisyui'),
-  ],
+  plugins: [],
 };

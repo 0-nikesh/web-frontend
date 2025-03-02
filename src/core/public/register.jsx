@@ -77,7 +77,7 @@ const Register = () => {
 
             // Verify OTP
             const response = await axios.post("http://localhost:3000/api/users/verify-otp", {
-                userId,
+                email: formData.email, // ✅ Use email instead of userId
                 otp,
             });
 
